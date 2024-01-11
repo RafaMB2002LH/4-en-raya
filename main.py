@@ -81,6 +81,44 @@ class humanPlayer:
 
         return square-1
     
+class ComputerPlayer(TicTacToe):
+    def __init__(self, letter):
+        self.botPlayer = letter
+        self.humanPlayer = "X" if letter == "O" else "O"
+    
+    def players(self, state):
+        n = len(state)
+        x = 0
+        o = 0
+
+        for i in range(16):
+            if(state[i] == "X"):
+                x = x+1
+            if(state[i] == "O"):
+                o = o+1
+
+        if(self.humanPlayer == "X"):
+            return "X" if x==o else "O"
+        if(self.humanPlayer == "O"):
+            return "O" if x==o else "X"
+        
+    def actions(self, state):
+        return [i for i, x in enumerate(state) if x == "-"]
+    
+    def result(self, state, action):
+        new_state = state.copy()
+        player = self.players(state)
+        new_state[action] = player
+
+        return new_state
+    
+    def terminal(self, state):
+        if(self.is_player_win(state, "X")):
+            return True
+        if(self.is_player_win(state, "O")):
+            return True
+        
+        return False
 
 tictactoe = TicTacToe()
 tictactoe.start()
