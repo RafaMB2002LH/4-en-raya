@@ -1,7 +1,9 @@
+#Esta clase define el jugador humano
 class HumanPlayer:
     def __init__(self, letter):
         self.letter = letter
 
+    #Esta funcion pide los movimientos al humano   
     def human_move(self, state):
         # Entrada del usuario
         while True:
