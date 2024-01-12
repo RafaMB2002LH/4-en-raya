@@ -2,9 +2,12 @@ import random
 import math
 import os
 
+#X maximo = 1
+#O minimo = -1
+
 class TicTacToe:
     def __init__(self):
-        self.board = ['-' for _ in range(16)]
+        self.board = ['-' for _ in range(9)]
         if random.randint(0, 1) == 1:
             self.humanPLayer = 'X'
             self.botPlayer = "O"
@@ -14,27 +17,22 @@ class TicTacToe:
 
     def show_board(self):
         print("")
-        for i in range(4):
-            print("  ",self.board[0+(i*4)]," | ",self.board[1+(i*4)]," | ",self.board[2+(i*4)], " | ", self.board[3+(i*4)])
+        for i in range(3):
+            print("  ",self.board[0+(i*3)]," | ",self.board[1+(i*3)]," | ",self.board[2+(i*3)])
             print("")
             
     def is_board_filled(self,state):
         return not "-" in state
 
-    def is_player_win(self, state, player):
-        #Gana horizontal
-        if state[0]==state[1]==state[2]==state[3]== player: return True
-        if state[4]==state[5]==state[6]==state[7]== player: return True
-        if state[8]==state[9]==state[10]==state[11]== player: return True
-        if state[12]==state[13]==state[14]==state[15]== player: return True
-        #Gana vertical
-        if state[0]==state[4]==state[8]==state[12]== player: return True
-        if state[1]==state[5]==state[9]==state[13]== player: return True
-        if state[2]==state[6]==state[10]==state[14]== player: return True
-        if state[3]==state[7]==state[11]==state[15]== player: return True
-        #Gana diagonal
-        if state[0]==state[5]==state[10]==state[15]== player: return True
-        if state[12]==state[9]==state[6]==state[3]== player: return True
+    def is_player_win(self,state,player):
+        if state[0]==state[1]==state[2] == player: return True
+        if state[3]==state[4]==state[5] == player: return True
+        if state[6]==state[7]==state[8] == player: return True
+        if state[0]==state[3]==state[6] == player: return True
+        if state[1]==state[4]==state[7] == player: return True
+        if state[2]==state[5]==state[8] == player: return True
+        if state[0]==state[4]==state[8] == player: return True
+        if state[2]==state[4]==state[6] == player: return True
 
         return False
 
@@ -49,6 +47,7 @@ class TicTacToe:
             print(f"   Player {self.botPlayer} wins the game!")
             return True
 
+        # comprobar si el juego está empatado o no
         if self.is_board_filled(self.board):
             os.system("cls")
             print("   Match Draw!")
@@ -63,18 +62,19 @@ class TicTacToe:
             print(f"   Player {self.humanPLayer} turn")
             self.show_board()
             
-            #Human
+            #Humano
             square = human.human_move(self.board)
             self.board[square] = self.humanPLayer
             if self.checkWinner():
                 break
             
-            #Bot
-            square = bot.machine_move_alpha_beta(self.board)
+            #IA
+            square = bot.machine_move(self.board)
             self.board[square] = self.botPlayer
             if self.checkWinner():
                 break
 
+        # Mostrar la vista final del tablero
         print()
         self.show_board()
 
@@ -83,8 +83,9 @@ class humanPLayer:
         self.letter = letter
     
     def human_move(self,state):
+        #Entrada del usuario
         while True:
-            square =  int(input("Enter the square to fix spot(1-16): "))
+            square =  int(input("Enter the square to fix spot(1-9): "))
             print()
             if state[square-1] == "-":
                 break
@@ -99,7 +100,7 @@ class ComputerPlayer(TicTacToe):
         n = len(state)
         x = 0
         o = 0
-        for i in range(16):
+        for i in range(9):
             if(state[i] == "X"):
                 x = x+1
             if(state[i] == "O"):
@@ -126,10 +127,11 @@ class ComputerPlayer(TicTacToe):
             return True
         return False
 
-    def minimax_alpha_beta(self, state, player, alfa, beta):
+    def minimax(self, state, player):
         max_player = self.humanPlayer  # Tu mismo
         other_player = 'O' if player == 'X' else 'X'
 
+        # primero queremos comprobar si el movimiento anterior es ganador
         if self.terminal(state):
             return {'position': None, 'score': 1 * (len(self.actions(state)) + 1) if other_player == max_player else -1 * (
                         len(self.actions(state)) + 1)}
@@ -137,33 +139,27 @@ class ComputerPlayer(TicTacToe):
             return {'position': None, 'score': 0}
 
         if player == max_player:
-            best = {'position': None, 'score': -math.inf}
+            best = {'position': None, 'score': -math.inf}  # cada puntuación debe maximizarse
         else:
-            best = {'position': None, 'score': math.inf}
-
+            best = {'position': None, 'score': math.inf}  # cada puntuación debe minimizarse
         for possible_move in self.actions(state):
-            newState = self.result(state, possible_move)
-            sim_score = self.minimax_alpha_beta(newState, other_player, alfa, beta)
+            newState = self.result(state,possible_move)
+            sim_score = self.minimax(newState, other_player)  # simular un juego después de hacer ese movimiento
 
-            sim_score['position'] = possible_move
+            sim_score['position'] = possible_move  # esto representa el siguiente movimiento óptimo
 
-            if player == max_player:
+            if player == max_player:  # X es el jugador máximo
                 if sim_score['score'] > best['score']:
                     best = sim_score
-                alfa = max(alfa, best['score'])
             else:
                 if sim_score['score'] < best['score']:
                     best = sim_score
-                beta = min(beta, best['score'])
-
-            if beta <= alfa:
-                break
-
         return best
 
-    def machine_move_alpha_beta(self, state):
-        square = self.minimax_alpha_beta(state, self.botPlayer, -math.inf, math.inf)['position']
+    def machine_move(self,state):
+        square = self.minimax(state,self.botPlayer)['position']
         return square
 
+# comenzando el juego
 tic_tac_toe = TicTacToe()
 tic_tac_toe.start()
