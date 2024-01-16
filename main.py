@@ -2,6 +2,7 @@
 import random
 import math
 import os
+import time
 
 #Clase del 4 en raya
 class TicTacToe:
@@ -13,6 +14,7 @@ class TicTacToe:
         else:
             self.humanPlayer = "O"
             self.botPlayer = "X"
+        self.move_times = []
 
     #Esta funcion muestra el tablero
     def show_board(self):
@@ -79,6 +81,7 @@ class TicTacToe:
                 break
 
             # IA
+            start_time = time.time()
             if self.count_empty_squares() > 10:
                 # Aleatorio cuando hay más de 10 casillas vacías
                 empty_squares = [i for i, x in enumerate(self.board) if x == "-"]
@@ -87,6 +90,10 @@ class TicTacToe:
                 # Minimax cuando quedan 10 o menos casillas vacías
                 square = bot.machine_move(self.board)
 
+            end_time = time.time()  # Registrar el tiempo de finalización
+            move_time = end_time - start_time
+            self.move_times.append(move_time)
+
             self.board[square] = self.botPlayer
             if self.check_winner():
                 break
@@ -94,6 +101,11 @@ class TicTacToe:
         # Mostrar la vista final del tablero
         print()
         self.show_board()
+
+        # Mostrar los tiempos de movimiento de la IA al finalizar
+        print("\nAI Move Times:")
+        for i, move_time in enumerate(self.move_times, start=1):
+            print(f"Move {i}: {move_time:.5f} seconds")
 
     #En esta funcion cuento las casillas vacias
     def count_empty_squares(self):
