@@ -50,18 +50,18 @@ class TicTacToe:
     def check_winner(self):
         if self.is_player_win(self.board, self.humanPlayer):
             os.system("cls")
-            print(f"   Player {self.humanPlayer} wins the game!")
+            print(f"   El jugador {self.humanPlayer} gana la partida!")
             return True
 
         if self.is_player_win(self.board, self.botPlayer):
             os.system("cls")
-            print(f"   Player {self.botPlayer} wins the game!")
+            print(f"   El jugador {self.botPlayer} gana la partida!")
             return True
 
         # Comprobar si el juego está empatado o no
         if self.is_board_filled(self.board):
             os.system("cls")
-            print("   Match Draw!")
+            print("   Empate!")
             return True
         return False
 
@@ -71,7 +71,7 @@ class TicTacToe:
         human = HumanPlayer(self.humanPlayer)
         while True:
             os.system("cls")
-            print(f"   Player {self.humanPlayer} turn")
+            print(f"   Turno del jugador {self.humanPlayer}")
             self.show_board()
 
             # Humano
@@ -103,9 +103,9 @@ class TicTacToe:
         self.show_board()
 
         # Mostrar los tiempos de movimiento de la IA al finalizar
-        print("\nAI Move Times:")
+        print("\nTiempos de movimiento de la IA:")
         for i, move_time in enumerate(self.move_times, start=1):
-            print(f"Move {i}: {move_time:.5f} seconds")
+            print(f"Movimiento {i}: {move_time:.5f} segundos")
 
     #En esta funcion cuento las casillas vacias
     def count_empty_squares(self):
@@ -120,7 +120,7 @@ class HumanPlayer:
     def human_move(self, state):
         # Entrada del usuario
         while True:
-            square = int(input("Enter the square to fix spot(1-16): "))
+            square = int(input("Ingrese la casilla(1-16): "))
             print()
             if state[square - 1] == "-":
                 break
