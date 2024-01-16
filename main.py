@@ -116,15 +116,19 @@ class HumanPlayer:
     def __init__(self, letter):
         self.letter = letter
 
-    #Esta funcion pide los movimientos al humano
     def human_move(self, state):
-        # Entrada del usuario
         while True:
-            square = int(input("Ingrese la casilla(1-16): "))
-            print()
-            if state[square - 1] == "-":
+            try:
+                square = int(input("Ingrese la casilla(1-16): "))
+                if square < 1 or square > 16:
+                    raise ValueError("Número fuera de rango. Por favor, ingrese un número entre 1 y 16.")
+                if state[square - 1] != "-":
+                    raise ValueError("La casilla ya está ocupada. Por favor, elija otra.")
                 break
+            except ValueError as e:
+                print(f"Error: {e}")
         return square - 1
+
 
 #Esta clase define la IA
 class ComputerPlayer(TicTacToe):
